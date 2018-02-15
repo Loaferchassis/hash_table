@@ -1,20 +1,45 @@
 import time
+from random import randint
 
 
 def main():
-    print('Hello!')
-
     obj = HashMap()
-    file = open('C:/Users/Alexander/PycharmProjects/tbms/text', encoding="utf8")
-    obj.build(file)
 
+    # Generate data
+    n = 1000
+    maxint = 200
+    nums_k_v = [(randint(1, maxint), i) for i in range(n)]
+
+    # Build hashMap
+    obj.build(nums_k_v)
+
+    # Get time for Hash
     time1 = time.time()
-    # print(buckets[0])
-    # delete('give')
-    for i in range(1, 10000):
-        obj.search('never')
 
-    print(time.time() - time1)
+    for i in range(1, 10000):
+        obj.search(20)
+
+    print('Index search: ', time.time() - time1)
+
+    # Check insertion
+    obj.insert((101023012301203, "Hello!"))
+    obj.insert((101023012301203, "Hola!"))
+    obj.insert((101023012301203, "Hi!"))
+
+    print(obj.search(101023012301203))
+
+    # Check deletion
+    obj.delete((101023012301203, "Hello!"))
+    print(obj.search(101023012301203))
+
+    # Get time for simple search
+    time1 = time.time()
+    returnList = []
+    for i in range(1, 10000):
+        for pair in nums_k_v:
+            if "20".__eq__(pair[0]):
+                returnList.append(pair)
+    print('Simple search: ', time.time() - time1)
 
 
 class HashMap:
@@ -22,43 +47,30 @@ class HashMap:
         self.num_of_buckets = 100
         self.buckets = [[] for _ in range(self.num_of_buckets)]
 
-    def build(self, file):
-        wordlist = file.readlines()
-        # print(wordlist)
-        for line in wordlist:
-            for word in line.split(" "):
-                self.insert(word)
-
-        words = []
-        for line in wordlist:
-            for word in line.split(" "):
-                words.append(word)
-        # time1 = time.time()
-        # for i in range(1, 10000):
-        #     for word in words:
-        #         if "never".__eq__(word):
-        #             break
-        # print(time.time() - time1)
+    # Takes List of Pairs (key, value)
+    def build(self, list):
+        for element in list:
+            self.insert(element)
 
     # hashFunction
-    def hashFunction(self, key):
+    def __hashFunction(self, key):
         return hash(key) % self.num_of_buckets
 
     # Insertion
     def insert(self, object):
-        self.buckets[self.hashFunction(object)].append(object)
+        self.buckets[self.__hashFunction(object[0])].append(object)
 
-    # Delete
+    # Deletion
     def delete(self, object):
-        self.buckets[self.hashFunction(object)].remove(object)
-        print('Delete')
+        self.buckets[self.__hashFunction(object[0])].remove(object)
 
     # Search
-    def search(self, object):
-        mHash = self.hashFunction(object)
-        for h in self.buckets[mHash]:
-            if object.__eq__(h):
-                return h, mHash
+    def search(self, key):
+        return_list = []
+        for h in self.buckets[self.__hashFunction(key)]:
+            if key is (h[0]):
+                return_list.append(h)
+        return return_list
 
 
 if __name__ == '__main__':
